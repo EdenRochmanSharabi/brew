@@ -1082,6 +1082,57 @@ RSpec.describe Formula do
     expect(f2).not_to have_post_install_defined
   end
 
+  specify "#post_install_steps" do
+    f = formula do
+      url "foo-1.0"
+
+      post_install_steps do
+        mkdir_p "log/foo"
+        touch "foo/marker"
+        mv "move-source", "move-target"
+        move_children "children-source", "children-target"
+        ln_s "move-target", "linked-target", source_base: :relative, uninstall: true
+      end
+    end
+
+    expect(f.post_install_steps).to eq([
+      { "type" => "mkdir_p", "path" => { "base" => "var", "path" => "log/foo" } },
+      { "type" => "touch", "path" => { "base" => "var", "path" => "foo/marker" } },
+      {
+        "type"   => "move",
+        "source" => { "base" => "prefix", "path" => "move-source" },
+        "target" => { "base" => "prefix", "path" => "move-target" },
+      },
+      {
+        "type"   => "move_children",
+        "source" => { "base" => "prefix", "path" => "children-source" },
+        "target" => { "base" => "prefix", "path" => "children-target" },
+      },
+      {
+        "type"      => "symlink",
+        "source"    => { "base" => "relative", "path" => "move-target" },
+        "target"    => { "base" => "prefix", "path" => "linked-target" },
+        "uninstall" => true,
+      },
+    ])
+    expect(f.post_install_steps_defined?).to be(true)
+    expect(f.to_hash["post_install_steps"]).to eq(f.post_install_steps)
+  end
+
+  specify "#post_install_steps_conflict?" do
+    f = formula do
+      url "foo-1.0"
+
+      post_install_steps do
+        touch "foo/marker"
+      end
+
+      def post_install; end
+    end
+
+    expect(f.post_install_steps_conflict?).to be(true)
+  end
+
   describe "#install_etc_var" do
     let(:f) do
       formula "config-upgrade" do

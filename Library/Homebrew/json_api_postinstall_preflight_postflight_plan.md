@@ -98,7 +98,7 @@ Local scan source: `homebrew/cask` at `4ed4e04eaa5`.
   `_steps` blocks literal-only; when a phase gets wired in, add the runtime
   warning that steps win over the legacy Ruby block; add conservative
   autocorrection only where every legacy statement maps mechanically.
-- [ ] PR 2, formula `post_install_steps`.
+- [x] PR 2, formula `post_install_steps`.
   Commit: `Add formula install steps`.
   Scope: formula DSL, formula JSON API data, API formula loading, installer and
   `brew postinstall` execution, formula cookbook docs, formula fixture and

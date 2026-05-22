@@ -303,6 +303,11 @@ module Formulary
         link_overwrite path
       end
 
+      @post_install_steps = T.let(
+        formula_struct.post_install_steps,
+        T.nilable(Homebrew::InstallSteps::Steps),
+      )
+
       define_method(:install) do
         raise NotImplementedError, "Cannot build from source from abstract formula."
       end
