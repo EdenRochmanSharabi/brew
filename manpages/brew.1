@@ -1390,6 +1390,9 @@ Treat all named arguments as casks\. If no named arguments are specified, upgrad
 \fB\-\-skip\-cask\-deps\fP
 Skip installing cask dependencies\.
 .TP
+\fB\-\-no\-quit\fP
+Prevent running cask applications from being quit during upgrade\. Enabled by default if \fB$HOMEBREW_NO_UPGRADE_QUIT_CASKS\fP is set\.
+.TP
 \fB\-g\fP, \fB\-\-greedy\fP
 Also include casks with \fBversion :latest\fP and \fBauto_updates true\fP casks that would otherwise be skipped\. Enabled by default if \fB$HOMEBREW_UPGRADE_GREEDY\fP is set\.
 .TP
@@ -3225,6 +3228,9 @@ If set, disable the Linux sandbox\.
 \fBHOMEBREW_NO_UPDATE_REPORT_NEW\fP
 If set, \fBbrew update\fP will not show the list of newly added formulae/casks\.
 .TP
+\fBHOMEBREW_NO_UPGRADE_QUIT_CASKS\fP
+If set, \fBbrew upgrade\fP will not quit running applications for casks during upgrades\.
+.TP
 \fBHOMEBREW_NO_VERIFY_ATTESTATIONS\fP
 If set, Homebrew will not verify cryptographic attestations of build provenance for bottles from homebrew\-core\.
 .TP
@@ -3239,7 +3245,7 @@ If set, \fBbrew install\fP \fIformula\fP will use this URL to download PyPI pack
 If set, use Pry for the \fBbrew irb\fP command\.
 .TP
 \fBHOMEBREW_SANDBOX_LINUX\fP
-If set, use the \fBbwrap\fP(1) sandbox for formula installation and testing on Linux\.
+If set, use the \fBbwrap\fP(1) sandbox for formula installation and testing on Linux\. Enabled by default if \fB$HOMEBREW_DEVELOPER\fP is set\. This will be the default in Homebrew 5\.2\.0\.
 .TP
 \fBHOMEBREW_SBOM\fP
 If set, Homebrew will write SBOM files and run SBOM\-related installation logic\. This is a no\-op until Homebrew 5\.2\.0, when it will become required for that behaviour\.

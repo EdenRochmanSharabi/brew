@@ -2197,6 +2197,11 @@ for the upgraded formulae or, every 30 days, for all formulae.
 
 : Skip installing cask dependencies.
 
+`--no-quit`
+
+: Prevent running cask applications from being quit during upgrade. Enabled by
+  default if `$HOMEBREW_NO_UPGRADE_QUIT_CASKS` is set.
+
 `-g`, `--greedy`
 
 : Also include casks with `version :latest` and `auto_updates true` casks that
@@ -4933,6 +4938,11 @@ command execution (e.g. `$(cat file)`).
 
 : If set, `brew update` will not show the list of newly added formulae/casks.
 
+`HOMEBREW_NO_UPGRADE_QUIT_CASKS`
+
+: If set, `brew upgrade` will not quit running applications for casks during
+  upgrades.
+
 `HOMEBREW_NO_VERIFY_ATTESTATIONS`
 
 : If set, Homebrew will not verify cryptographic attestations of build
@@ -4952,7 +4962,8 @@ command execution (e.g. `$(cat file)`).
 `HOMEBREW_SANDBOX_LINUX`
 
 : If set, use the `bwrap`(1) sandbox for formula installation and testing on
-  Linux.
+  Linux. Enabled by default if `$HOMEBREW_DEVELOPER` is set. This will be the
+  default in Homebrew 5.2.0.
 
 `HOMEBREW_SBOM`
 
