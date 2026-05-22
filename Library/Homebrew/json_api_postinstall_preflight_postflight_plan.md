@@ -113,7 +113,7 @@ Local scan source: `homebrew/cask` at `4ed4e04eaa5`.
   paths to `prefix`; expose the ordered array through `FormulaStruct`; make
   `post_install_steps` take precedence over `post_install`; document that the
   two forms must not be mixed.
-- [ ] PR 3, cask flight steps.
+- [x] PR 3, cask flight steps.
   Commit: `Add cask install steps`.
   Scope: cask artifacts for `preflight_steps`, `postflight_steps`,
   `uninstall_preflight_steps` and `uninstall_postflight_steps`, cask API
