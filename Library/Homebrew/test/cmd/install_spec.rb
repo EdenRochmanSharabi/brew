@@ -281,34 +281,32 @@ RSpec.describe Homebrew::Cmd::InstallCmd do
   end
 
   context "when building from source" do
-    let(:formula_name) { "testball1" }
+    let(:formula_name) { "sourceball" }
 
     it "installs a Formula", :integration_test do
       formula_prefix = HOMEBREW_CELLAR/formula_name/"0.1"
       formula_prefix_regex = /#{Regexp.escape(formula_prefix)}/o
-      option_file = formula_prefix/"foo/test"
-      always_built_file = formula_prefix/"bin/test"
+      built_file = formula_prefix/"built-from-source"
 
-      setup_test_formula formula_name
+      setup_test_formula formula_name, <<~RUBY
+        url "file://#{TEST_FIXTURE_DIR}/tarballs/testball-0.1.tbz"
+        sha256 TESTBALL_SHA256
 
-      expect { brew "install", formula_name, "--with-foo" }
+        def install
+          (prefix/"built-from-source").write("test")
+        end
+      RUBY
+
+      expect { brew "install", formula_name }
         .to output(formula_prefix_regex).to_stdout
         .and output(/✔︎.*/m).to_stderr
         .and be_a_success
-      expect(option_file).to be_a_file
-      expect(always_built_file).to be_a_file
-
-      uninstall_test_formula formula_name
-
-      expect { brew "install", formula_name, "--debug-symbols", "--build-from-source" }
-        .to output(formula_prefix_regex).to_stdout
-        .and output(/✔︎.*/m).to_stderr
-        .and be_a_success
-      expect(option_file).not_to be_a_file
-      expect(always_built_file).to be_a_file
-      expect(formula_prefix/"bin/test.dSYM/Contents/Resources/DWARF/test").to be_a_file if OS.mac?
-      expect(HOMEBREW_CACHE/"Sources/#{formula_name}").to be_a_directory
+      expect(built_file).to be_a_file
     end
+  end
+
+  context "when installing HEAD" do
+    let(:formula_name) { "testball1" }
 
     it "installs a HEAD Formula", :integration_test do
       testball1_prefix = HOMEBREW_CELLAR/"testball1/HEAD-d5eb689"

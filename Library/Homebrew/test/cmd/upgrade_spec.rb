@@ -38,24 +38,25 @@ RSpec.describe Homebrew::Cmd::UpgradeCmd do
     expect(formula_rack/"0.0.1").not_to exist
 
     uninstall_test_formula formula_name
+    FormulaInstaller.clear_attempted
 
     # links newer version when upgrade was interrupted
     (formula_rack/"0.1/foo").mkpath
 
-    expect { brew "upgrade" }.to be_a_success
+    expect { klass.new([]).run }.not_to raise_error
 
     expect(formula_rack/"0.1").to be_a_directory
     expect(HOMEBREW_PREFIX/"opt/#{formula_name}").to be_a_symlink
     expect(HOMEBREW_PREFIX/"var/homebrew/linked/#{formula_name}").to be_a_symlink
 
     uninstall_test_formula formula_name
+    FormulaInstaller.clear_attempted
 
     # upgrades with asking for user prompts
     (formula_rack/"0.0.1/foo").mkpath
 
-    expect { brew "upgrade", "--ask" }
+    expect { klass.new(["--ask"]).run }
       .to output(/==> Would upgrade 1 outdated package\n#{formula_name} 0\.1/).to_stdout
-      .and output(/✔︎.*/m).to_stderr
 
     expect(formula_rack/"0.1").to be_a_directory
     expect(formula_rack/"0.0.1").not_to exist
@@ -65,10 +66,12 @@ RSpec.describe Homebrew::Cmd::UpgradeCmd do
     # refuses to upgrade a forbidden formula
     (formula_rack/"0.0.1/foo").mkpath
 
-    expect { brew "upgrade", formula_name, { "HOMEBREW_FORBIDDEN_FORMULAE" => formula_name } }
-      .to not_to_output(%r{#{formula_rack}/0\.1}o).to_stdout
-      .and output(/#{formula_name} was forbidden/).to_stderr
-      .and be_a_failure
+    with_env("HOMEBREW_FORBIDDEN_FORMULAE" => formula_name) do
+      expect { klass.new([formula_name]).run }
+        .to not_to_output(%r{#{formula_rack}/0\.1}o).to_stdout
+        .and output(/#{formula_name} was forbidden/).to_stderr
+    end
+    expect(Homebrew).to have_failed
     expect(formula_rack/"0.1").not_to exist
   end
 
